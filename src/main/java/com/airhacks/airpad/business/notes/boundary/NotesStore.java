@@ -1,8 +1,6 @@
 package com.airhacks.airpad.business.notes.boundary;
 
 import com.airhacks.airpad.business.notes.entity.Note;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javax.annotation.PostConstruct;
