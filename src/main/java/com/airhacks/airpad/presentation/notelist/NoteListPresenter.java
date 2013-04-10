@@ -14,13 +14,14 @@ import javax.inject.Inject;
  * @author adam-bien.com
  */
 public class NoteListPresenter implements Initializable {
-
+    
     @FXML
     ListView<Note> listView;
     @Inject
     NotesStore notesStore;
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        listView.setItems(notesStore.notes());
     }
 }
