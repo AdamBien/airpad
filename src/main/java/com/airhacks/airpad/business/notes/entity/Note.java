@@ -25,4 +25,18 @@ public class Note {
     public StringProperty contentProperty() {
         return this.content;
     }
+
+    public boolean matches(String newValue) {
+        if (newValue == null) {
+            return false;
+        }
+        String titleValue = title.get();
+        String contentValue = content.get();
+        return (titleValue.contains(newValue) || contentValue.contains(newValue));
+    }
+
+    @Override
+    public String toString() {
+        return title + ":" + content;
+    }
 }
