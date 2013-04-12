@@ -27,7 +27,7 @@ public class Note {
     }
 
     public boolean matches(String newValue) {
-        if (newValue == null) {
+        if (newValue == null || content.get() == null) {
             return false;
         }
         String titleValue = title.get();
