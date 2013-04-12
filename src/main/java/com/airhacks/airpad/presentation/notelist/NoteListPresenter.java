@@ -10,6 +10,7 @@ import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -25,18 +26,17 @@ import javax.inject.Inject;
  * @author adam-bien.com
  */
 public class NoteListPresenter implements Initializable {
-
+    
     @FXML
     ListView<Note> listView;
     @Inject
     NotesStore notesStore;
     private MultipleSelectionModel<Note> selectionModel;
     private BooleanProperty noteSelected;
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.noteSelected = new SimpleBooleanProperty();
-        listView.setItems(notesStore.notes());
         listView.setEditable(false);
         this.selectionModel = this.listView.getSelectionModel();
         selectionModel.setSelectionMode(SelectionMode.SINGLE);
@@ -57,16 +57,20 @@ public class NoteListPresenter implements Initializable {
             }
         });
     }
-
+    
     public ReadOnlyObjectProperty<Note> selectedNote() {
         return selectionModel.selectedItemProperty();
     }
-
+    
     public ReadOnlyBooleanProperty nodeSelected() {
         return this.noteSelected;
     }
-
+    
     public void requestFocus() {
         this.listView.requestFocus();
+    }
+    
+    public void bind(ObservableList<Note> notes) {
+        this.listView.setItems(notes);
     }
 }

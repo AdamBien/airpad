@@ -8,8 +8,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -38,15 +42,20 @@ public class AirpadPresenter implements Initializable {
     private NoteListView noteListView;
     private NoteListPresenter noteListPresenter;
     private ObjectProperty<Note> selectedNote;
+    private StringProperty title;
+    private ObservableList<Note> notes;
+    private ObservableList<Note> filteredNotes;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        this.initModel();
         this.selectedNote = new SimpleObjectProperty<>();
         this.noteListView = new NoteListView();
         this.noteListPresenter = (NoteListPresenter) this.noteListView.getPresenter();
+        this.noteListPresenter.bind(notes());
         Parent view = this.noteListView.getView();
         this.noteList.getChildren().add(view);
-        store.title().bind(this.noteName.textProperty());
+        title().bind(this.noteName.textProperty());
         this.selectedNote.bind(this.noteListPresenter.selectedNote());
         this.selectedNote.addListener(new ChangeListener<Note>() {
             @Override
@@ -67,7 +76,39 @@ public class AirpadPresenter implements Initializable {
         });
     }
 
+    void initModel() {
+        this.notes = FXCollections.observableArrayList();
+        this.filteredNotes = FXCollections.observableArrayList();
+        this.title = new SimpleStringProperty();
+        this.title.addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
+                System.out.println("Newvalue: " + newValue + " old value: " + oldValue);
+                filteredNotes.clear();
+                for (Note note : notes) {
+                    if (note.matches(newValue)) {
+                        filteredNotes.add(note);
+                    }
+                }
+            }
+        });
+
+    }
+
     public void noteNameEntered() {
-        store.findOrCreate(noteName.getText());
+        findOrCreate(noteName.getText());
+    }
+
+    public void findOrCreate(String text) {
+        final Note note = new Note(text);
+        this.notes.add(note);
+    }
+
+    public ObservableList<Note> notes() {
+        return this.filteredNotes;
+    }
+
+    public StringProperty title() {
+        return this.title;
     }
 }
