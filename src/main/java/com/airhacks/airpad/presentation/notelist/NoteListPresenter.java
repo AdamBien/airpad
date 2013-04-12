@@ -26,14 +26,14 @@ import javax.inject.Inject;
  * @author adam-bien.com
  */
 public class NoteListPresenter implements Initializable {
-    
+
     @FXML
     ListView<Note> listView;
     @Inject
     NotesStore notesStore;
     private MultipleSelectionModel<Note> selectionModel;
     private BooleanProperty noteSelected;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.noteSelected = new SimpleBooleanProperty();
@@ -57,19 +57,19 @@ public class NoteListPresenter implements Initializable {
             }
         });
     }
-    
+
     public ReadOnlyObjectProperty<Note> selectedNote() {
         return selectionModel.selectedItemProperty();
     }
-    
+
     public ReadOnlyBooleanProperty nodeSelected() {
         return this.noteSelected;
     }
-    
+
     public void requestFocus() {
         this.listView.requestFocus();
     }
-    
+
     public void bind(ObservableList<Note> notes) {
         this.listView.setItems(notes);
     }

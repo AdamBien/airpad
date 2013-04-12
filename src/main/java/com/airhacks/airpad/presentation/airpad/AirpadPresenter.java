@@ -96,12 +96,13 @@ public class AirpadPresenter implements Initializable {
     }
 
     public void noteNameEntered() {
-        findOrCreate(noteName.getText());
+        create(noteName.getText());
     }
 
-    public void findOrCreate(String text) {
+    public void create(String text) {
         final Note note = new Note(text);
         this.notes.add(note);
+        this.store.create(note);
     }
 
     public ObservableList<Note> notes() {
