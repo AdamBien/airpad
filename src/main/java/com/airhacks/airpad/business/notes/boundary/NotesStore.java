@@ -31,9 +31,10 @@ public class NotesStore {
         this.title = new SimpleStringProperty();
         this.title.addListener(new ChangeListener<String>() {
             @Override
-            public void changed(ObservableValue<? extends String> ov, String newValue, String oldValue) {
+            public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
+                System.out.println("Newvalue: " + newValue + " old value: " + oldValue);
                 filteredNotes.clear();
-                for (Note note : filteredNotes) {
+                for (Note note : notes) {
                     if (note.matches(newValue)) {
                         filteredNotes.add(note);
                     }
@@ -45,7 +46,6 @@ public class NotesStore {
     public void findOrCreate(String text) {
         final Note note = new Note(text);
         this.notes.add(note);
-        this.filteredNotes.add(note);
     }
 
     public ObservableList<Note> notes() {

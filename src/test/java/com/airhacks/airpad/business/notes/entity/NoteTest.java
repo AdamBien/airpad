@@ -15,16 +15,14 @@ public class NoteTest {
         cut.contentProperty().set("b");
         assertTrue(cut.matches("a"));
         assertTrue(cut.matches("b"));
-        assertFalse(cut.matches("c"));
-        assertFalse(cut.matches(null));
+        assertTrue(cut.matches(" "));
     }
 
     @Test
     public void matchesWithoutContent() {
         Note cut = new Note("a");
-        assertFalse(cut.matches("a"));
+        assertTrue(cut.matches("a"));
         assertFalse(cut.matches("b"));
         assertFalse(cut.matches("c"));
-        assertFalse(cut.matches(null));
     }
 }
