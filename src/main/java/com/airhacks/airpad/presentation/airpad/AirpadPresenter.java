@@ -10,6 +10,8 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -49,13 +51,18 @@ public class AirpadPresenter implements Initializable {
         this.selectedNote.addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
-                System.out.println("Note changed: " + newNote);
                 if (old != null) {
                     old.contentProperty().unbind();
                 }
                 noteContent.textProperty().set(newNote.contentProperty().get());
                 noteContent.textProperty().unbind();
                 newNote.contentProperty().bind(noteContent.textProperty());
+            }
+        });
+        this.noteListPresenter.nodeSelected().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean old, Boolean newValue) {
+                noteContent.requestFocus();
             }
         });
     }
