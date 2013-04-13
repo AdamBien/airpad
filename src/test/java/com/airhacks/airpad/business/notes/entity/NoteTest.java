@@ -25,4 +25,23 @@ public class NoteTest {
         assertFalse(cut.matches("b"));
         assertFalse(cut.matches("c"));
     }
+
+    @Test
+    public void dirtyDetection() {
+        Note cut = new Note("a");
+        assertTrue(cut.isDirty());
+        cut.synced();
+        assertFalse(cut.isDirty());
+
+        cut.contentProperty().set("new content");
+        assertTrue(cut.isDirty());
+        cut.synced();
+        assertFalse(cut.isDirty());
+
+        cut.titleProperty().set("new content");
+        assertTrue(cut.isDirty());
+        cut.synced();
+        assertFalse(cut.isDirty());
+
+    }
 }

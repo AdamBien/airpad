@@ -95,7 +95,12 @@ public class NotesStore {
     }
 
     void save(Note note) {
+
         System.out.println("Saving: " + note);
+        if (note.isDirty()) {
+            this.notes.add(note);
+            note.synced();
+        }
         String title = note.titleProperty().get();
         String content = note.contentProperty().get();
         File file = new File(title + ".note");

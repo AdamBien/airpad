@@ -18,10 +18,12 @@ public class Note implements Externalizable {
 
     private StringProperty title;
     private StringProperty content;
+    private String beforeImage;
 
     public Note() {
         this.title = new SimpleStringProperty();
         this.content = new SimpleStringProperty();
+        this.beforeImage = "";
     }
 
     public Note(String title) {
@@ -90,5 +92,18 @@ public class Note implements Externalizable {
         String contentValue = in.readUTF();
         this.title.set(titleValue);
         this.content.set(contentValue);
+        this.synced();
+    }
+
+    public void synced() {
+        this.beforeImage = computeFingerprint();
+    }
+
+    public boolean isDirty() {
+        return (!this.beforeImage.equals(computeFingerprint()));
+    }
+
+    private String computeFingerprint() {
+        return this.title.concat(this.content).get();
     }
 }
