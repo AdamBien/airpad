@@ -56,11 +56,13 @@ public class AirpadPresenter implements Initializable {
         this.selectedNote.addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
+                if (newNote == null) {
+                    return;
+                }
                 if (old != null) {
                     old.contentProperty().unbind();
                 }
                 noteContent.textProperty().set(newNote.contentProperty().get());
-                noteContent.textProperty().unbind();
                 newNote.contentProperty().bind(noteContent.textProperty());
             }
         });
@@ -97,7 +99,6 @@ public class AirpadPresenter implements Initializable {
         this.title.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                System.out.println("Newvalue: " + newValue + " old value: " + oldValue);
                 filteredNotes.clear();
                 for (Note note : allNotes()) {
                     if (note.matches(newValue)) {

@@ -4,10 +4,13 @@ import com.airhacks.airpad.business.notes.entity.Note;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ISet;
-import com.hazelcast.core.InstanceEvent;
-import com.hazelcast.core.InstanceListener;
 import com.hazelcast.core.ItemEvent;
 import com.hazelcast.core.ItemListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Set;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
@@ -66,6 +69,7 @@ public class NotesStore {
 
     public void create(Note note) {
         this.notes.add(note);
+        save();
     }
 
     public void delete(Note note) {
@@ -82,5 +86,24 @@ public class NotesStore {
 
     public Set<Note> allNotes() {
         return this.notes;
+    }
+
+    public void save() {
+        for (Note note : notes) {
+            save(note);
+        }
+    }
+
+    void save(Note note) {
+        System.out.println("Saving: " + note);
+        String title = note.titleProperty().get();
+        String content = note.contentProperty().get();
+        File file = new File(title + ".note");
+        Charset charset = Charset.forName("UTF-8");
+        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), charset)) {
+            writer.write(content, 0, content.length());
+        } catch (IOException x) {
+            System.err.format("IOException: %s%n", x);
+        }
     }
 }
