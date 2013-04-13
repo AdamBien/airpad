@@ -1,7 +1,3 @@
-.boxSpacing{
-    -fx-padding: 10 10 10 10;
-}
-
 .root {    
-    -fx-font: 18px "Menlo,Verdana";
+    -fx-font: 18px "Menlo,Verdana,Helvetica";
 }
