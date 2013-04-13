@@ -28,7 +28,7 @@ import javax.inject.Inject;
  * @author adam-bien.com
  */
 public class AirpadPresenter implements Initializable {
-    
+
     @FXML
     TextField noteName;
     @FXML
@@ -42,7 +42,7 @@ public class AirpadPresenter implements Initializable {
     private ObjectProperty<Note> selectedNote;
     private StringProperty title;
     private ObservableList<Note> filteredNotes;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.initModel();
@@ -81,7 +81,7 @@ public class AirpadPresenter implements Initializable {
         });
         this.registerListeners();
     }
-    
+
     void registerListeners() {
         this.store.addedProperty().addListener(new ChangeListener<Note>() {
             @Override
@@ -90,7 +90,7 @@ public class AirpadPresenter implements Initializable {
                 filteredNotes.add(newNote);
             }
         });
-        
+
         this.store.removedProperty().addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
@@ -98,54 +98,62 @@ public class AirpadPresenter implements Initializable {
                 filteredNotes.remove(newNote);
             }
         });
-        
+
         this.store.updatedProperty().addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
-                for (int i = 0; i < filteredNotes.size(); i++) {
-                    Note note = filteredNotes.get(i);
-                    if (note.equals(newNote)) {
-                        note.from(newNote);
-                    }
-                }
+                refreshList(newNote);
             }
         });
     }
-    
+
     void initModel() {
         this.filteredNotes = FXCollections.observableArrayList();
         this.title = new SimpleStringProperty();
         this.title.addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
-                filteredNotes.clear();
-                for (Note note : store.allNotes()) {
-                    if (note.matches(newValue)) {
-                        filteredNotes.add(note);
-                    }
-                }
+                refreshList(newValue);
             }
         });
-        
+
     }
-    
+
+    void refreshList(String newValue) {
+        filteredNotes.clear();
+        for (Note note : store.allNotes()) {
+            if (note.matches(newValue)) {
+                filteredNotes.add(note);
+            }
+        }
+    }
+
+    void refreshList(Note newNote) {
+        for (Note note : filteredNotes) {
+            if (note.equals(newNote)) {
+                System.out.println("Copying: " + note + " <- " + newNote);
+                note.from(newNote);
+            }
+        }
+    }
+
     public void noteNameEntered() {
         create(noteName.getText());
     }
-    
+
     public void create(String text) {
         final Note note = new Note(text);
         this.store.create(note);
     }
-    
+
     public ObservableList<Note> filteredNotes() {
         return this.filteredNotes;
     }
-    
+
     public StringProperty title() {
         return this.title;
     }
-    
+
     public void save() {
         this.store.save();
     }
