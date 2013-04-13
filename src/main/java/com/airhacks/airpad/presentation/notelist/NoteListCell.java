@@ -10,10 +10,15 @@ import javafx.scene.control.ListCell;
 public class NoteListCell extends ListCell<Note> {
     
     @Override
-    protected void updateItem(Note t, boolean bln) {
-        super.updateItem(t, bln);
+    protected void updateItem(Note t, boolean empty) {
+        super.updateItem(t, empty);
+        if (empty) {
+            textProperty().unbind();
+            setText(null);
+            setGraphic(null);
+        }
         if (t != null) {
-            setText(t.toString());
+            textProperty().bind(t.toBindableString());
         }
     }
 }

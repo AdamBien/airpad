@@ -67,7 +67,7 @@ public class AirpadPresenter implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> ov, String old, String newValue) {
                 Note note = selectedNote.getValue();
-                if (note != null) {
+                if (note != null && newValue != null) {
                     note.contentProperty().set(newValue);
                     store.update(note);
                 }

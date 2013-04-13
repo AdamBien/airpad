@@ -154,6 +154,6 @@ public class NotesStore {
     }
 
     public void update(Note note) {
-        this.notes.putAsync(note.titleProperty().get(), note);
+        this.notes.put(note.titleProperty().get(), note);
     }
 }
