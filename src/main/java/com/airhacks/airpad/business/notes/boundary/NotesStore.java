@@ -22,6 +22,7 @@ import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 /**
  *
@@ -201,5 +202,10 @@ public class NotesStore {
 
     Path getNotePath(String title) {
         return Paths.get(this.notesDirectory, title + ".note");
+    }
+
+    @PreDestroy
+    public void shutdown() {
+        Hazelcast.shutdownAll();
     }
 }
