@@ -10,7 +10,7 @@ Launch an airpad:
 
 1. `mvn clean install` (native installer is about to come)
 2. Another one...
-3. Enjoy the sync :-)
+3. Enjoy the sync experience :-)
 
 
 
