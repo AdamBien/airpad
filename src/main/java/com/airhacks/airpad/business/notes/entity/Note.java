@@ -48,6 +48,10 @@ public class Note implements Externalizable {
         return this.content;
     }
 
+    public String getIdentifier() {
+        return titleProperty().get();
+    }
+
     public boolean matches(String newValue) {
         if (newValue.trim().isEmpty()) {
             return true;

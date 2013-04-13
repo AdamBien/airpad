@@ -56,6 +56,10 @@ public class NoteListPresenter implements Initializable {
                 if (t.getCode().equals(KeyCode.ENTER)) {
                     noteSelected.set(false);
                 }
+                if (t.getCode().equals(KeyCode.BACK_SPACE)) {
+                    deleteSelectedNote();
+                }
+
             }
         });
         listView.setCellFactory(new Callback<ListView<Note>, ListCell<Note>>() {
@@ -64,6 +68,13 @@ public class NoteListPresenter implements Initializable {
                 return new NoteListCell();
             }
         });
+    }
+
+    void deleteSelectedNote() {
+        Note selectedNote = selectedNote().get();
+        if (selectedNote != null) {
+            notesStore.remove(selectedNote);
+        }
     }
 
     public ReadOnlyObjectProperty<Note> selectedNote() {

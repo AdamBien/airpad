@@ -157,7 +157,7 @@ public class NotesStore {
         } catch (IOException ex) {
             System.err.format("IOException: %s%n", ex);
         }
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.notesDirectory, title + ".note"), charset)) {
+        try (BufferedWriter writer = Files.newBufferedWriter(getNotePath(title), charset)) {
             writer.write(content, 0, content.length());
         } catch (IOException ex) {
             System.err.format("IOException: %s%n", ex);
@@ -188,5 +188,18 @@ public class NotesStore {
     String stripEnding(String withEnding) {
         int lastIndexOf = withEnding.lastIndexOf('.');
         return withEnding.substring(0, lastIndexOf);
+    }
+
+    public void remove(Note note) {
+        this.notes.remove(note.getIdentifier());
+        try {
+            Files.deleteIfExists(getNotePath(note.getIdentifier()));
+        } catch (IOException ex) {
+            Logger.getLogger(NotesStore.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    Path getNotePath(String title) {
+        return Paths.get(this.notesDirectory, title + ".note");
     }
 }
