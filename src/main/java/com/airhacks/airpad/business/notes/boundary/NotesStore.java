@@ -10,8 +10,13 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.FileStore;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -28,6 +33,7 @@ public class NotesStore {
     private HazelcastInstance hazelcast;
     private ObjectProperty<Note> removed;
     private ObjectProperty<Note> added;
+    private String notesDirectory = "notes";
 
     @PostConstruct
     public void init() {
@@ -95,20 +101,30 @@ public class NotesStore {
     }
 
     void save(Note note) {
-
         System.out.println("Saving: " + note);
         if (note.isDirty()) {
+            System.out.println("Note is dirty: " + note);
             this.notes.add(note);
             note.synced();
+
         }
         String title = note.titleProperty().get();
         String content = note.contentProperty().get();
-        File file = new File(title + ".note");
         Charset charset = Charset.forName("UTF-8");
-        try (BufferedWriter writer = Files.newBufferedWriter(file.toPath(), charset)) {
+
+
+        try {
+            final Path directory = Paths.get(this.notesDirectory);
+            if (!Files.exists(directory)) {
+                Files.createDirectories(directory);
+            }
+        } catch (IOException ex) {
+            System.err.format("IOException: %s%n", ex);
+        }
+        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(this.notesDirectory, title + ".note"), charset)) {
             writer.write(content, 0, content.length());
-        } catch (IOException x) {
-            System.err.format("IOException: %s%n", x);
+        } catch (IOException ex) {
+            System.err.format("IOException: %s%n", ex);
         }
     }
 }
