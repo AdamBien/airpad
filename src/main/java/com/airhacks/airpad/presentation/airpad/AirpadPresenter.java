@@ -6,6 +6,7 @@ import com.airhacks.airpad.presentation.notelist.NoteListPresenter;
 import com.airhacks.airpad.presentation.notelist.NoteListView;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.Set;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -59,11 +60,17 @@ public class AirpadPresenter implements Initializable {
                 if (newNote == null) {
                     return;
                 }
-                if (old != null) {
-                    old.contentProperty().unbind();
+                noteContent.setText(newNote.contentProperty().get());
+            }
+        });
+        noteContent.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String old, String newValue) {
+                Note note = selectedNote.getValue();
+                if (note != null) {
+                    note.contentProperty().set(newValue);
+                    store.update(note);
                 }
-                noteContent.textProperty().set(newNote.contentProperty().get());
-                newNote.contentProperty().bind(noteContent.textProperty());
             }
         });
         this.noteListPresenter.nodeSelected().addListener(new ChangeListener<Boolean>() {
@@ -100,7 +107,7 @@ public class AirpadPresenter implements Initializable {
             @Override
             public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                 filteredNotes.clear();
-                for (Note note : allNotes()) {
+                for (Note note : store.allNotes()) {
                     if (note.matches(newValue)) {
                         filteredNotes.add(note);
                     }
@@ -121,10 +128,6 @@ public class AirpadPresenter implements Initializable {
 
     public ObservableList<Note> filteredNotes() {
         return this.filteredNotes;
-    }
-
-    public ObservableList<Note> allNotes() {
-        return FXCollections.observableArrayList(this.store.allNotes());
     }
 
     public StringProperty title() {

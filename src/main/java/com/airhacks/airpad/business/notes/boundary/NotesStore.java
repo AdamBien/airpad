@@ -1,8 +1,11 @@
 package com.airhacks.airpad.business.notes.boundary;
 
 import com.airhacks.airpad.business.notes.entity.Note;
+import com.hazelcast.core.EntryEvent;
+import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.hazelcast.core.ISet;
 import com.hazelcast.core.ItemEvent;
 import com.hazelcast.core.ItemListener;
@@ -14,6 +17,7 @@ import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,52 +33,85 @@ import javax.annotation.PostConstruct;
  */
 public class NotesStore {
 
-    private ISet<Note> notes;
+    private IMap<String, Note> notes;
     private HazelcastInstance hazelcast;
     private ObjectProperty<Note> removed;
     private ObjectProperty<Note> added;
+    private ObjectProperty<Note> updated;
     private String notesDirectory = "notes";
 
     @PostConstruct
     public void init() {
         this.added = new SimpleObjectProperty<>();
         this.removed = new SimpleObjectProperty<>();
+        this.updated = new SimpleObjectProperty<>();
         this.hazelcast = Hazelcast.newHazelcastInstance();
-        this.notes = this.hazelcast.getSet("notes");
-        this.notes.addItemListener(new ItemListener<Note>() {
+        this.notes = this.hazelcast.getMap("notes");
+        this.notes.addEntryListener(new EntryListener<String, Note>() {
             @Override
-            public void itemAdded(ItemEvent<Note> item) {
-                final Note note = item.getItem();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        added.set(note);
-                    }
-                });
+            public void entryAdded(EntryEvent<String, Note> event) {
+                System.out.println("Added: " + event);
+                add(event);
             }
 
             @Override
-            public void itemRemoved(ItemEvent<Note> item) {
-                final Note note = item.getItem();
-                Platform.runLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        removed.set(note);
-                    }
-                });
+            public void entryRemoved(EntryEvent<String, Note> event) {
+                System.out.println("Removed: " + event);
+                remove(event);
+            }
+
+            @Override
+            public void entryUpdated(EntryEvent<String, Note> event) {
+                System.out.println("Updated: " + event);
+                update(event);
+            }
+
+            @Override
+            public void entryEvicted(EntryEvent<String, Note> event) {
             }
         }, true);
+
         refill();
     }
 
+    public void add(EntryEvent<String, Note> event) {
+        final Note note = event.getValue();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                added.set(note);
+            }
+        });
+    }
+
+    public void update(EntryEvent<String, Note> event) {
+        final Note note = event.getValue();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                updated.set(note);
+            }
+        });
+    }
+
+    public void remove(EntryEvent<String, Note> event) {
+        final Note note = event.getValue();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                removed.set(note);
+            }
+        });
+    }
+
     void refill() {
-        for (Note note : notes) {
+        for (Note note : notes.values()) {
             this.added.set(note);
         }
     }
 
     public void create(Note note) {
-        this.notes.add(note);
+        this.notes.put(note.titleProperty().get(), note);
         save();
     }
 
@@ -90,29 +127,25 @@ public class NotesStore {
         return removed;
     }
 
-    public Set<Note> allNotes() {
-        return this.notes;
+    public ReadOnlyObjectProperty<Note> updatedProperty() {
+        return updated;
+    }
+
+    public Collection<Note> allNotes() {
+        return this.notes.values();
     }
 
     public void save() {
-        for (Note note : notes) {
+        for (Note note : notes.values()) {
             save(note);
         }
     }
 
     void save(Note note) {
         System.out.println("Saving: " + note);
-        if (note.isDirty()) {
-            System.out.println("Note is dirty: " + note);
-            this.notes.add(note);
-            note.synced();
-
-        }
         String title = note.titleProperty().get();
         String content = note.contentProperty().get();
         Charset charset = Charset.forName("UTF-8");
-
-
         try {
             final Path directory = Paths.get(this.notesDirectory);
             if (!Files.exists(directory)) {
@@ -126,5 +159,9 @@ public class NotesStore {
         } catch (IOException ex) {
             System.err.format("IOException: %s%n", ex);
         }
+    }
+
+    public void update(Note note) {
+        this.notes.putAsync(note.titleProperty().get(), note);
     }
 }
