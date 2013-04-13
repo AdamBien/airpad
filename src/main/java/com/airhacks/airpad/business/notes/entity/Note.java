@@ -15,11 +15,11 @@ import javafx.beans.value.ObservableValue;
  * @author adam-bien.com
  */
 public class Note implements Externalizable {
-    
+
     private StringProperty title;
     private StringProperty content;
     private String beforeImage;
-    
+
     public Note() {
         this.title = new SimpleStringProperty();
         this.content = new SimpleStringProperty();
@@ -32,20 +32,20 @@ public class Note implements Externalizable {
         });
         this.beforeImage = "";
     }
-    
+
     public Note(String title) {
         this();
         this.title.set(title);
     }
-    
+
     public StringProperty titleProperty() {
         return this.title;
     }
-    
+
     public StringProperty contentProperty() {
         return this.content;
     }
-    
+
     public boolean matches(String newValue) {
         if (newValue.trim().isEmpty()) {
             return true;
@@ -54,14 +54,14 @@ public class Note implements Externalizable {
         String contentValue = content.get();
         return (titleValue.contains(newValue) || contentValue.contains(newValue));
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 7;
         hash = 79 * hash + Objects.hashCode(this.computeFingerprint());
         return hash;
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -76,18 +76,18 @@ public class Note implements Externalizable {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         return title.get() + ":" + content.get();
     }
-    
+
     @Override
     public void writeExternal(ObjectOutput out) throws IOException {
         out.writeUTF(title.get());
         out.writeUTF(content.get());
     }
-    
+
     @Override
     public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
         String titleValue = in.readUTF();
@@ -95,16 +95,21 @@ public class Note implements Externalizable {
         this.title.set(titleValue);
         this.content.set(contentValue);
     }
-    
+
     public void synced() {
         this.beforeImage = computeFingerprint();
     }
-    
+
     public boolean isDirty() {
         return (!this.beforeImage.equals(computeFingerprint()));
     }
-    
+
     private String computeFingerprint() {
         return this.title.concat(this.content).get();
+    }
+
+    public void from(Note newNote) {
+        this.content.set(newNote.content.get());
+        this.title.set(newNote.title.get());
     }
 }

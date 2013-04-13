@@ -98,6 +98,17 @@ public class AirpadPresenter implements Initializable {
                 filteredNotes.remove(newNote);
             }
         });
+
+        this.store.updatedProperty().addListener(new ChangeListener<Note>() {
+            @Override
+            public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
+                for (Note note : filteredNotes) {
+                    if (note.equals(newNote)) {
+                        note.from(newNote);
+                    }
+                }
+            }
+        });
     }
 
     void initModel() {
