@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.util.Objects;
+import javafx.beans.binding.StringExpression;
+import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -105,7 +107,12 @@ public class Note implements Externalizable {
     }
 
     private String computeFingerprint() {
-        return this.title.concat(this.content).get();
+        return toBindableString().get();
+    }
+
+    public StringExpression toBindableString() {
+        return this.title.concat(this.content);
+
     }
 
     public void from(Note newNote) {

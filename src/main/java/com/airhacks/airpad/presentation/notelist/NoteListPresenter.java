@@ -14,11 +14,13 @@ import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MultipleSelectionModel;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.util.Callback;
 import javax.inject.Inject;
 
 /**
@@ -54,6 +56,12 @@ public class NoteListPresenter implements Initializable {
                 if (t.getCode().equals(KeyCode.ENTER)) {
                     noteSelected.set(false);
                 }
+            }
+        });
+        listView.setCellFactory(new Callback<ListView<Note>, ListCell<Note>>() {
+            @Override
+            public ListCell<Note> call(ListView<Note> p) {
+                return new NoteListCell();
             }
         });
     }
