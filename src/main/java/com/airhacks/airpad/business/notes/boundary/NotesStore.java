@@ -9,6 +9,7 @@ import com.hazelcast.core.InstanceListener;
 import com.hazelcast.core.ItemEvent;
 import com.hazelcast.core.ItemListener;
 import java.util.Set;
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -34,14 +35,24 @@ public class NotesStore {
         this.notes.addItemListener(new ItemListener<Note>() {
             @Override
             public void itemAdded(ItemEvent<Note> item) {
-                Note note = item.getItem();
-                added.set(note);
+                final Note note = item.getItem();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        added.set(note);
+                    }
+                });
             }
 
             @Override
             public void itemRemoved(ItemEvent<Note> item) {
-                Note note = item.getItem();
-                removed.set(note);
+                final Note note = item.getItem();
+                Platform.runLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        removed.set(note);
+                    }
+                });
             }
         }, true);
     }

@@ -74,6 +74,25 @@ public class AirpadPresenter implements Initializable {
                 noteContent.requestFocus();
             }
         });
+        this.registerListeners();
+    }
+
+    void registerListeners() {
+        this.store.addedProperty().addListener(new ChangeListener<Note>() {
+            @Override
+            public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
+                System.out.println("Added: " + newNote);
+                filteredNotes.add(newNote);
+            }
+        });
+
+        this.store.removedProperty().addListener(new ChangeListener<Note>() {
+            @Override
+            public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
+                System.out.println("Removed: " + newNote);
+                filteredNotes.remove(newNote);
+            }
+        });
     }
 
     void initModel() {
@@ -101,7 +120,6 @@ public class AirpadPresenter implements Initializable {
 
     public void create(String text) {
         final Note note = new Note(text);
-        this.notes.add(note);
         this.store.create(note);
     }
 
