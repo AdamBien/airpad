@@ -111,7 +111,7 @@ public class Note implements Externalizable {
     }
 
     public StringExpression toBindableString() {
-        return this.title.concat(this.content);
+        return this.title.concat(":::").concat(this.content);
 
     }
 
