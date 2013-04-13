@@ -14,12 +14,9 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
@@ -43,7 +40,6 @@ public class AirpadPresenter implements Initializable {
     private NoteListPresenter noteListPresenter;
     private ObjectProperty<Note> selectedNote;
     private StringProperty title;
-    private ObservableList<Note> notes;
     private ObservableList<Note> filteredNotes;
 
     @Override
@@ -52,7 +48,7 @@ public class AirpadPresenter implements Initializable {
         this.selectedNote = new SimpleObjectProperty<>();
         this.noteListView = new NoteListView();
         this.noteListPresenter = (NoteListPresenter) this.noteListView.getPresenter();
-        this.noteListPresenter.bind(notes());
+        this.noteListPresenter.bind(filteredNotes());
         Parent view = this.noteListView.getView();
         this.noteList.getChildren().add(view);
         title().bind(this.noteName.textProperty());
@@ -96,7 +92,6 @@ public class AirpadPresenter implements Initializable {
     }
 
     void initModel() {
-        this.notes = FXCollections.observableArrayList();
         this.filteredNotes = FXCollections.observableArrayList();
         this.title = new SimpleStringProperty();
         this.title.addListener(new ChangeListener<String>() {
@@ -104,7 +99,7 @@ public class AirpadPresenter implements Initializable {
             public void changed(ObservableValue<? extends String> ov, String oldValue, String newValue) {
                 System.out.println("Newvalue: " + newValue + " old value: " + oldValue);
                 filteredNotes.clear();
-                for (Note note : notes) {
+                for (Note note : allNotes()) {
                     if (note.matches(newValue)) {
                         filteredNotes.add(note);
                     }
@@ -123,8 +118,12 @@ public class AirpadPresenter implements Initializable {
         this.store.create(note);
     }
 
-    public ObservableList<Note> notes() {
+    public ObservableList<Note> filteredNotes() {
         return this.filteredNotes;
+    }
+
+    public ObservableList<Note> allNotes() {
+        return FXCollections.observableArrayList(this.store.allNotes());
     }
 
     public StringProperty title() {

@@ -55,6 +55,13 @@ public class NotesStore {
                 });
             }
         }, true);
+        refill();
+    }
+
+    void refill() {
+        for (Note note : notes) {
+            this.added.set(note);
+        }
     }
 
     public void create(Note note) {
@@ -71,5 +78,9 @@ public class NotesStore {
 
     public ReadOnlyObjectProperty<Note> removedProperty() {
         return removed;
+    }
+
+    public Set<Note> allNotes() {
+        return this.notes;
     }
 }
