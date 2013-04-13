@@ -92,7 +92,6 @@ public class Note implements Externalizable {
         String contentValue = in.readUTF();
         this.title.set(titleValue);
         this.content.set(contentValue);
-        this.synced();
     }
 
     public void synced() {

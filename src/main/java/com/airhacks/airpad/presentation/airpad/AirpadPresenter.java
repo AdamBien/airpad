@@ -130,4 +130,8 @@ public class AirpadPresenter implements Initializable {
     public StringProperty title() {
         return this.title;
     }
+
+    public void save() {
+        this.store.save();
+    }
 }
