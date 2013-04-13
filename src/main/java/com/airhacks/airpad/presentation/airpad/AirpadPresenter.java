@@ -102,7 +102,8 @@ public class AirpadPresenter implements Initializable {
         this.store.updatedProperty().addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
-                for (Note note : filteredNotes) {
+                for (int i = 0; i < filteredNotes.size(); i++) {
+                    Note note = filteredNotes.get(i);
                     if (note.equals(newNote)) {
                         note.from(newNote);
                     }
