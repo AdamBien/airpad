@@ -28,7 +28,7 @@ import javax.inject.Inject;
  * @author adam-bien.com
  */
 public class AirpadPresenter implements Initializable {
-
+    
     @FXML
     TextField noteName;
     @FXML
@@ -42,7 +42,7 @@ public class AirpadPresenter implements Initializable {
     private ObjectProperty<Note> selectedNote;
     private StringProperty title;
     private ObservableList<Note> filteredNotes;
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.initModel();
@@ -81,7 +81,7 @@ public class AirpadPresenter implements Initializable {
         });
         this.registerListeners();
     }
-
+    
     void registerListeners() {
         this.store.addedProperty().addListener(new ChangeListener<Note>() {
             @Override
@@ -90,7 +90,7 @@ public class AirpadPresenter implements Initializable {
                 filteredNotes.add(newNote);
             }
         });
-
+        
         this.store.removedProperty().addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
@@ -98,7 +98,7 @@ public class AirpadPresenter implements Initializable {
                 filteredNotes.remove(newNote);
             }
         });
-
+        
         this.store.updatedProperty().addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
@@ -111,7 +111,7 @@ public class AirpadPresenter implements Initializable {
             }
         });
     }
-
+    
     void initModel() {
         this.filteredNotes = FXCollections.observableArrayList();
         this.title = new SimpleStringProperty();
@@ -126,26 +126,26 @@ public class AirpadPresenter implements Initializable {
                 }
             }
         });
-
+        
     }
-
+    
     public void noteNameEntered() {
         create(noteName.getText());
     }
-
+    
     public void create(String text) {
         final Note note = new Note(text);
         this.store.create(note);
     }
-
+    
     public ObservableList<Note> filteredNotes() {
         return this.filteredNotes;
     }
-
+    
     public StringProperty title() {
         return this.title;
     }
-
+    
     public void save() {
         this.store.save();
     }
