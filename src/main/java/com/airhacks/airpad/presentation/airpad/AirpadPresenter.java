@@ -65,7 +65,6 @@ public class AirpadPresenter implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Boolean> ov, Boolean focusedBefore, Boolean focusNow) {
                 if (focusedBefore && !focusNow) {
-                    noteList.requestLayout();
                     noteListPresenter.requestFocus();
                 }
             }
@@ -153,6 +152,7 @@ public class AirpadPresenter implements Initializable {
         this.selectedNote.addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
+                System.out.println("Note selected: " + ov + " old " + old + " new " + newNote);
                 if (newNote == null) {
                     return;
                 }

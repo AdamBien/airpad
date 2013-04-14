@@ -46,7 +46,7 @@ public class NoteListPresenter implements Initializable {
             @Override
             public void handle(KeyEvent t) {
                 if (t.getCode().equals(KeyCode.ENTER)) {
-                    noteSelected.set(true);
+                    editSelectedNote();
                 }
             }
         });
@@ -83,6 +83,13 @@ public class NoteListPresenter implements Initializable {
 
     public ReadOnlyBooleanProperty nodeSelected() {
         return this.noteSelected;
+    }
+
+    void editSelectedNote() {
+        if (selectionModel.getSelectedItems().isEmpty()) {
+            selectionModel.selectFirst();
+        }
+        noteSelected.set(true);
     }
 
     public void requestFocus() {
