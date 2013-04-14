@@ -30,6 +30,7 @@ import javax.annotation.PreDestroy;
  */
 public class NotesStore {
 
+    public static final String NOTE_ENDING = ".txt";
     private IMap<String, Note> notes;
     private HazelcastInstance hazelcast;
     private ObjectProperty<Note> removed;
@@ -201,7 +202,7 @@ public class NotesStore {
     }
 
     Path getNotePath(String title) {
-        return Paths.get(this.notesDirectory, title + ".note");
+        return Paths.get(this.notesDirectory, title + NOTE_ENDING);
     }
 
     @PreDestroy

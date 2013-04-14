@@ -86,6 +86,7 @@ public class NoteListPresenter implements Initializable {
     }
 
     public void requestFocus() {
+        selectionModel.selectFirst();
         this.listView.requestFocus();
     }
 

@@ -6,7 +6,6 @@ import com.airhacks.airpad.presentation.notelist.NoteListPresenter;
 import com.airhacks.airpad.presentation.notelist.NoteListView;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.Set;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -57,7 +56,20 @@ public class AirpadPresenter implements Initializable {
         installSelectedNoteListener();
         installNoteContentListener();
         installTextAreaFocusHandler();
-        this.installModelListeners();
+        installFocusListeners();
+        installModelListeners();
+    }
+
+    void installFocusListeners() {
+        this.noteName.focusedProperty().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean focusedBefore, Boolean focusNow) {
+                if (focusedBefore && !focusNow) {
+                    noteList.requestLayout();
+                    noteListPresenter.requestFocus();
+                }
+            }
+        });
     }
 
     void installModelListeners() {
