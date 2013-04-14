@@ -54,35 +54,13 @@ public class AirpadPresenter implements Initializable {
         this.noteList.getChildren().add(view);
         title().bind(this.noteName.textProperty());
         this.selectedNote.bind(this.noteListPresenter.selectedNote());
-        this.selectedNote.addListener(new ChangeListener<Note>() {
-            @Override
-            public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
-                if (newNote == null) {
-                    return;
-                }
-                noteContent.setText(newNote.contentProperty().get());
-            }
-        });
-        noteContent.textProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String old, String newValue) {
-                Note note = selectedNote.getValue();
-                if (note != null && newValue != null) {
-                    note.contentProperty().set(newValue);
-                    store.update(note);
-                }
-            }
-        });
-        this.noteListPresenter.nodeSelected().addListener(new ChangeListener<Boolean>() {
-            @Override
-            public void changed(ObservableValue<? extends Boolean> ov, Boolean old, Boolean newValue) {
-                noteContent.requestFocus();
-            }
-        });
-        this.registerListeners();
+        installSelectedNoteListener();
+        installNoteContentListener();
+        installTextAreaFocusHandler();
+        this.installModelListeners();
     }
 
-    void registerListeners() {
+    void installModelListeners() {
         this.store.addedProperty().addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
@@ -156,5 +134,41 @@ public class AirpadPresenter implements Initializable {
 
     public void save() {
         this.store.save();
+    }
+
+    void installSelectedNoteListener() {
+        this.selectedNote.addListener(new ChangeListener<Note>() {
+            @Override
+            public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
+                if (newNote == null) {
+                    return;
+                }
+                noteContent.setText(newNote.contentProperty().get());
+            }
+        });
+    }
+
+    void installNoteContentListener() {
+        noteContent.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> ov, String old, String newValue) {
+                Note note = selectedNote.getValue();
+                if (note != null && newValue != null) {
+                    note.contentProperty().set(newValue);
+                    store.update(note);
+                }
+            }
+        });
+    }
+
+    void installTextAreaFocusHandler() {
+        this.noteListPresenter.nodeSelected().addListener(new ChangeListener<Boolean>() {
+            @Override
+            public void changed(ObservableValue<? extends Boolean> ov, Boolean old, Boolean newValue) {
+                if (newValue) {
+                    noteContent.requestFocus();
+                }
+            }
+        });
     }
 }
