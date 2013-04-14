@@ -24,7 +24,7 @@
         </SplitPane>
       </center>
       <top>
-        <TextField id="noteNameTxt" fx:id="noteName" onAction="#noteNameEntered" prefWidth="200.0" />
+        <TextField id="noteNameTxt" fx:id="noteName" onAction="#noteNameEntered" prefWidth="200.0" promptText="Search / Create &lt;Enter&gt;" />
       </top>
     </BorderPane>
   </children>
