@@ -58,6 +58,7 @@ public class AirpadPresenter implements Initializable {
         installTextAreaFocusHandler();
         installFocusListeners();
         installModelListeners();
+        installNoteContentEnabling();
     }
 
     void installFocusListeners() {
@@ -183,5 +184,9 @@ public class AirpadPresenter implements Initializable {
                 }
             }
         });
+    }
+
+    void installNoteContentEnabling() {
+        this.noteContent.disableProperty().bind(this.selectedNote.isNull());
     }
 }
