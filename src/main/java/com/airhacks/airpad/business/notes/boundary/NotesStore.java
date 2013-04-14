@@ -36,11 +36,12 @@ public class NotesStore {
     private ObjectProperty<Note> removed;
     private ObjectProperty<Note> added;
     private ObjectProperty<Note> updated;
-    private String notesDirectory = "notes";
+    private Path notesDirectory;
     private Charset charset;
 
     @PostConstruct
     public void init() {
+        this.notesDirectory = Paths.get(System.getProperty("user.home"), "airpad");
         this.charset = Charset.forName("UTF-8");
         this.added = new SimpleObjectProperty<>();
         this.removed = new SimpleObjectProperty<>();
@@ -152,9 +153,8 @@ public class NotesStore {
         String title = note.titleProperty().get();
         String content = note.contentProperty().get();
         try {
-            final Path directory = Paths.get(this.notesDirectory);
-            if (!Files.exists(directory)) {
-                Files.createDirectories(directory);
+            if (!Files.exists(this.notesDirectory)) {
+                Files.createDirectories(this.notesDirectory);
             }
         } catch (IOException ex) {
             System.err.format("IOException: %s%n", ex);
@@ -171,8 +171,7 @@ public class NotesStore {
     }
 
     void loadFromDisk() throws IOException {
-        Path directoryPath = Paths.get(this.notesDirectory);
-        DirectoryStream<Path> directories = Files.newDirectoryStream(directoryPath);
+        DirectoryStream<Path> directories = Files.newDirectoryStream(this.notesDirectory);
         for (Path path : directories) {
             BufferedReader reader = Files.newBufferedReader(path, this.charset);
             StringBuilder content = new StringBuilder();
@@ -202,7 +201,7 @@ public class NotesStore {
     }
 
     Path getNotePath(String title) {
-        return Paths.get(this.notesDirectory, title + NOTE_ENDING);
+        return Paths.get(this.notesDirectory.toString(), title + NOTE_ENDING);
     }
 
     @PreDestroy

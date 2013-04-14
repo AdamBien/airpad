@@ -129,6 +129,7 @@ public class AirpadPresenter implements Initializable {
 
     public void noteNameEntered() {
         create(noteName.getText());
+        noteListPresenter.requestFocus();
     }
 
     public void create(String text) {
