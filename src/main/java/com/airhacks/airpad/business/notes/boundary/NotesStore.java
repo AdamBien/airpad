@@ -170,14 +170,14 @@ public class NotesStore {
     }
 
     void loadFromDisk() throws IOException {
-        Path notesDirectory = Paths.get(this.notesDirectory);
-        DirectoryStream<Path> directories = Files.newDirectoryStream(notesDirectory);
+        Path directoryPath = Paths.get(this.notesDirectory);
+        DirectoryStream<Path> directories = Files.newDirectoryStream(directoryPath);
         for (Path path : directories) {
             BufferedReader reader = Files.newBufferedReader(path, this.charset);
             StringBuilder content = new StringBuilder();
             String line = null;
             while ((line = reader.readLine()) != null) {
-                content.append(line).append("/n");
+                content.append(line).append('\n');
             }
             final Path fileName = path.getFileName();
             Note note = new Note(stripEnding(fileName.toString()));
