@@ -18,6 +18,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
+        setUserAgentStylesheet(STYLESHEET_MODENA);
         AirpadView appView = new AirpadView();
         Scene scene = new Scene(appView.getView());
         registerAccelerators(
