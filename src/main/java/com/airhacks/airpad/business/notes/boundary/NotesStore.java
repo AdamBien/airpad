@@ -15,6 +15,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -38,9 +43,12 @@ public class NotesStore {
     private ObjectProperty<Note> updated;
     private Path notesDirectory;
     private Charset charset;
+    private CopyOnWriteArraySet<Note> unitOfWork;
+    private Timer timer;
 
     @PostConstruct
     public void init() {
+        this.unitOfWork = new CopyOnWriteArraySet<>();
         this.notesDirectory = Paths.get(System.getProperty("user.home"), "airpad");
         this.charset = Charset.forName("UTF-8");
         this.added = new SimpleObjectProperty<>();
@@ -77,6 +85,7 @@ public class NotesStore {
             Logger.getLogger(NotesStore.class.getName()).log(Level.SEVERE, null, ex);
         }
         refill();
+        this.launchTimer();
     }
 
     public void add(EntryEvent<String, Note> event) {
@@ -167,7 +176,27 @@ public class NotesStore {
     }
 
     public void update(Note note) {
-        this.notes.put(note.titleProperty().get(), note);
+        this.unitOfWork.add(note);
+    }
+
+    void launchTimer() {
+        this.timer = new Timer("airpad-data-push");
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                pushChanges();
+            }
+        };
+        timer.scheduleAtFixedRate(task, 1000, 1000);
+    }
+
+    void pushChanges() {
+        System.out.print(".");
+        for (Note note : unitOfWork) {
+            this.notes.putAsync(note.titleProperty().get(), note);
+            this.unitOfWork.remove(note);
+            System.out.println("synching: " + note);
+        }
     }
 
     void loadFromDisk() throws IOException {
@@ -206,6 +235,7 @@ public class NotesStore {
 
     @PreDestroy
     public void shutdown() {
+        this.timer.cancel();
         Hazelcast.shutdownAll();
     }
 }
