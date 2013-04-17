@@ -126,7 +126,7 @@ public class AirpadPresenter implements Initializable {
 
     void handleModelUpdate(Note newNote) {
         for (Note note : filteredNotes) {
-            if (note.equals(newNote)) {
+            if (note.getIdentifier().equals(newNote.getIdentifier())) {
                 note.from(newNote);
             }
         }

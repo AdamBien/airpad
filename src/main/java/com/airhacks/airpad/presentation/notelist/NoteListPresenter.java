@@ -28,14 +28,14 @@ import javax.inject.Inject;
  * @author adam-bien.com
  */
 public class NoteListPresenter implements Initializable {
-
+    
     @FXML
     ListView<Note> listView;
     @Inject
     NotesStore notesStore;
     private MultipleSelectionModel<Note> selectionModel;
     private BooleanProperty noteSelected;
-
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.noteSelected = new SimpleBooleanProperty();
@@ -59,7 +59,7 @@ public class NoteListPresenter implements Initializable {
                 if (t.getCode().equals(KeyCode.BACK_SPACE)) {
                     deleteSelectedNote();
                 }
-
+                
             }
         });
         listView.setCellFactory(new Callback<ListView<Note>, ListCell<Note>>() {
@@ -69,35 +69,44 @@ public class NoteListPresenter implements Initializable {
             }
         });
     }
-
+    
     void deleteSelectedNote() {
         Note selectedNote = selectedNote().get();
         if (selectedNote != null) {
             notesStore.remove(selectedNote);
         }
     }
-
+    
     public ReadOnlyObjectProperty<Note> selectedNote() {
         return selectionModel.selectedItemProperty();
     }
-
+    
     public ReadOnlyBooleanProperty nodeSelected() {
         return this.noteSelected;
     }
-
+    
     void editSelectedNote() {
         if (selectionModel.getSelectedItems().isEmpty()) {
             selectionModel.selectFirst();
         }
         noteSelected.set(true);
     }
-
+    
     public void requestFocus() {
         selectionModel.selectFirst();
         this.listView.requestFocus();
     }
-
+    
     public void bind(ObservableList<Note> notes) {
         this.listView.setItems(notes);
+    }
+    
+    public void update(Note note) {
+        ObservableList<Note> items = this.listView.getItems();
+        for (Note current : items) {
+            if (current.getIdentifier().equals(note.getIdentifier())) {
+                current.from(note);
+            }
+        }
     }
 }
