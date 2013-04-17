@@ -176,7 +176,10 @@ public class NotesStore {
     }
 
     public void update(Note note) {
-        this.unitOfWork.add(note);
+        Note found = this.notes.get(note);
+        if (found != null && !found.getFingerprint().equals(note.getFingerprint())) {
+            this.unitOfWork.add(note);
+        }
     }
 
     void launchTimer() {
@@ -224,8 +227,11 @@ public class NotesStore {
         this.notes.remove(note.getIdentifier());
         try {
             Files.deleteIfExists(getNotePath(note.getIdentifier()));
+
+
         } catch (IOException ex) {
-            Logger.getLogger(NotesStore.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NotesStore.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
     }
 

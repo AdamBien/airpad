@@ -55,7 +55,7 @@ public class Note implements Externalizable {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + Objects.hashCode(this.computeFingerprint());
+        hash = 79 * hash + Objects.hashCode(this.getFingerprint());
         return hash;
     }
 
@@ -68,7 +68,7 @@ public class Note implements Externalizable {
             return false;
         }
         final Note other = (Note) obj;
-        if (!Objects.equals(this.computeFingerprint(), other.computeFingerprint())) {
+        if (!Objects.equals(this.getFingerprint(), other.getFingerprint())) {
             return false;
         }
         return true;
@@ -94,14 +94,14 @@ public class Note implements Externalizable {
     }
 
     public void synced() {
-        this.beforeImage = computeFingerprint();
+        this.beforeImage = getFingerprint();
     }
 
     public boolean isDirty() {
-        return (!this.beforeImage.equals(computeFingerprint()));
+        return (!this.beforeImage.equals(getFingerprint()));
     }
 
-    private String computeFingerprint() {
+    public String getFingerprint() {
         return toBindableString().get();
     }
 
