@@ -48,7 +48,7 @@ public class AirpadPresenter implements Initializable {
         this.selectedNote = new SimpleObjectProperty<>();
         this.noteListView = new NoteListView();
         this.noteListPresenter = (NoteListPresenter) this.noteListView.getPresenter();
-        this.noteListPresenter.bind(filteredNotes());
+        this.noteListPresenter.bind(this.filteredNotes);
         Parent view = this.noteListView.getView();
         this.noteList.getChildren().add(view);
         title().bind(this.noteName.textProperty());
