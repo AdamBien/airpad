@@ -121,7 +121,7 @@ public class AirpadPresenter implements Initializable {
     void refreshList(Note newNote) {
         for (Note note : filteredNotes) {
             if (note.equals(newNote)) {
-                System.out.println("Copying: " + note + " <- " + newNote);
+                System.out.println("Received update: Copying: " + note + " <- " + newNote);
                 note.from(newNote);
             }
         }

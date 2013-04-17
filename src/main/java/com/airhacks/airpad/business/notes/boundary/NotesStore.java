@@ -15,8 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -85,7 +83,7 @@ public class NotesStore {
             Logger.getLogger(NotesStore.class.getName()).log(Level.SEVERE, null, ex);
         }
         refill();
-        this.launchTimer();
+        launchTimer();
     }
 
     public void add(EntryEvent<String, Note> event) {
@@ -176,7 +174,7 @@ public class NotesStore {
     }
 
     public void update(Note note) {
-        Note found = this.notes.get(note);
+        Note found = this.notes.get(note.getIdentifier());
         if (found != null && !found.getFingerprint().equals(note.getFingerprint())) {
             this.unitOfWork.add(note);
         }
@@ -214,7 +212,7 @@ public class NotesStore {
             final Path fileName = path.getFileName();
             Note note = new Note(stripEnding(fileName.toString()));
             note.contentProperty().set(content.toString());
-            this.notes.put(note.titleProperty().get(), note);
+            this.notes.put(note.getIdentifier(), note);
         }
     }
 
