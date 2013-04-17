@@ -32,10 +32,10 @@ public class NoteListCell extends ListCell<Note> {
         if (exp.length().greaterThan(MAX_LENGTH).get()) {
             String txt = exp.getValue();
             final String substring = txt.substring(0, MAX_LENGTH);
-            retVal = substring.concat("...");
+            retVal = substring.replace('\n', ' ').concat("...");
+            return new SimpleStringProperty(retVal);
         } else {
-            retVal = exp.getValue();
+            return exp;
         }
-        return new SimpleStringProperty(retVal.replace('\n', ' '));
     }
 }
