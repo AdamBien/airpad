@@ -8,8 +8,6 @@ import java.util.Objects;
 import javafx.beans.binding.StringExpression;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 
 /**
  *
@@ -25,12 +23,6 @@ public class Note implements Externalizable {
         this.title = new SimpleStringProperty();
         this.content = new SimpleStringProperty();
         this.content.set("");
-        this.content.addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> ov, String t, String t1) {
-                System.out.println("--Old: " + t + " new " + t1);
-            }
-        });
         this.beforeImage = "";
     }
 
