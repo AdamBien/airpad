@@ -51,7 +51,7 @@ public class AirpadPresenter implements Initializable {
         this.noteListPresenter.bind(this.filteredNotes);
         Parent view = this.noteListView.getView();
         this.noteList.getChildren().add(view);
-        title().bind(this.noteName.textProperty());
+        this.title.bind(this.noteName.textProperty());
         this.selectedNote.bind(this.noteListPresenter.selectedNote());
         installSelectedNoteListener();
         installNoteContentListener();
@@ -118,6 +118,11 @@ public class AirpadPresenter implements Initializable {
         }
     }
 
+    void reload() {
+        filteredNotes.clear();
+        filteredNotes.setAll(store.allNotes());
+    }
+
     void refreshList(Note newNote) {
         for (Note note : filteredNotes) {
             if (note.equals(newNote)) {
@@ -139,10 +144,6 @@ public class AirpadPresenter implements Initializable {
 
     public ObservableList<Note> filteredNotes() {
         return this.filteredNotes;
-    }
-
-    public StringProperty title() {
-        return this.title;
     }
 
     public void save() {

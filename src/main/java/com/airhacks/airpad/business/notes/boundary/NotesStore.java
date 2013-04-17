@@ -43,6 +43,7 @@ public class NotesStore {
     private Charset charset;
     private CopyOnWriteArraySet<Note> unitOfWork;
     private Timer timer;
+    private boolean initialized = false;
 
     @PostConstruct
     public void init() {
@@ -58,19 +59,25 @@ public class NotesStore {
             @Override
             public void entryAdded(EntryEvent<String, Note> event) {
                 System.out.println("Added: " + event);
-                add(event);
+                if (initialized) {
+                    add(event);
+                }
             }
 
             @Override
             public void entryRemoved(EntryEvent<String, Note> event) {
                 System.out.println("Removed: " + event);
-                remove(event);
+                if (initialized) {
+                    remove(event);
+                }
             }
 
             @Override
             public void entryUpdated(EntryEvent<String, Note> event) {
                 System.out.println("Updated: " + event);
-                update(event);
+                if (initialized) {
+                    update(event);
+                }
             }
 
             @Override
@@ -84,6 +91,7 @@ public class NotesStore {
         }
         refill();
         launchTimer();
+        this.initialized = true;
     }
 
     public void add(EntryEvent<String, Note> event) {
