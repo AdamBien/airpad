@@ -2,7 +2,6 @@ package com.airhacks.airpad.presentation.notelist;
 
 import com.airhacks.airpad.business.notes.entity.Note;
 import javafx.beans.binding.StringExpression;
-import javafx.beans.property.ReadOnlyStringProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.scene.control.ListCell;
 
@@ -16,6 +15,7 @@ public class NoteListCell extends ListCell<Note> {
 
     @Override
     protected void updateItem(Note t, boolean empty) {
+        System.out.println("NoteListCell: Item update requested: " + t);
         super.updateItem(t, empty);
         if (empty) {
             textProperty().unbind();
@@ -28,13 +28,14 @@ public class NoteListCell extends ListCell<Note> {
     }
 
     StringExpression limited(StringExpression exp) {
+        String retVal;
         if (exp.length().greaterThan(MAX_LENGTH).get()) {
             String txt = exp.getValue();
             final String substring = txt.substring(0, MAX_LENGTH);
-            String substringWithoutNewLine = substring.replace('\n', ' ');
-            return new SimpleStringProperty(substringWithoutNewLine).concat("...");
+            retVal = substring.concat("...");
         } else {
-            return exp;
+            retVal = exp.getValue();
         }
+        return new SimpleStringProperty(retVal.replace('\n', ' '));
     }
 }

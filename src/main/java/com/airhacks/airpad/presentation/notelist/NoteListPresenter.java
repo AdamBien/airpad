@@ -3,6 +3,8 @@ package com.airhacks.airpad.presentation.notelist;
 import com.airhacks.airpad.business.notes.boundary.NotesStore;
 import com.airhacks.airpad.business.notes.entity.Note;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.ReadOnlyBooleanProperty;

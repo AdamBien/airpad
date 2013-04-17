@@ -5,6 +5,7 @@ import com.airhacks.airpad.business.notes.entity.Note;
 import com.airhacks.airpad.presentation.notelist.NoteListPresenter;
 import com.airhacks.airpad.presentation.notelist.NoteListView;
 import java.net.URL;
+import java.util.HashSet;
 import java.util.ResourceBundle;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -14,6 +15,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableSet;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
@@ -92,7 +94,7 @@ public class AirpadPresenter implements Initializable {
         this.store.updatedProperty().addListener(new ChangeListener<Note>() {
             @Override
             public void changed(ObservableValue<? extends Note> ov, Note old, Note newNote) {
-                refreshList(newNote);
+                handleModelUpdate(newNote);
             }
         });
     }
@@ -119,14 +121,12 @@ public class AirpadPresenter implements Initializable {
     }
 
     void reload() {
-        filteredNotes.clear();
         filteredNotes.setAll(store.allNotes());
     }
 
-    void refreshList(Note newNote) {
+    void handleModelUpdate(Note newNote) {
         for (Note note : filteredNotes) {
             if (note.equals(newNote)) {
-                System.out.println("Received update: Copying: " + note + " <- " + newNote);
                 note.from(newNote);
             }
         }
@@ -140,10 +140,6 @@ public class AirpadPresenter implements Initializable {
     public void create(String text) {
         final Note note = new Note(text);
         this.store.create(note);
-    }
-
-    public ObservableList<Note> filteredNotes() {
-        return this.filteredNotes;
     }
 
     public void save() {
