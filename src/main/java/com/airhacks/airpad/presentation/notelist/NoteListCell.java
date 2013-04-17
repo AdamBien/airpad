@@ -31,7 +31,8 @@ public class NoteListCell extends ListCell<Note> {
         if (exp.length().greaterThan(MAX_LENGTH).get()) {
             String txt = exp.getValue();
             final String substring = txt.substring(0, MAX_LENGTH);
-            return new SimpleStringProperty(substring).concat("...");
+            String substringWithoutNewLine = substring.replace('\n', ' ');
+            return new SimpleStringProperty(substringWithoutNewLine).concat("...");
         } else {
             return exp;
         }
