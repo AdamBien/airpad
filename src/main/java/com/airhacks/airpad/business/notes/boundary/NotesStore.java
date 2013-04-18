@@ -1,11 +1,14 @@
 package com.airhacks.airpad.business.notes.boundary;
 
 import com.airhacks.airpad.business.notes.entity.Note;
+import com.hazelcast.core.Cluster;
 import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.MembershipEvent;
+import com.hazelcast.core.MembershipListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -22,7 +25,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.ReadOnlyIntegerProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -39,51 +44,29 @@ public class NotesStore {
     private ObjectProperty<Note> removed;
     private ObjectProperty<Note> added;
     private ObjectProperty<Note> updated;
+    private SimpleIntegerProperty otherAirpads;
     private Path notesDirectory;
     private Charset charset;
     private CopyOnWriteArraySet<Note> unitOfWork;
     private Timer timer;
     private boolean initialized = false;
+    private Cluster cluster;
 
     @PostConstruct
     public void init() {
         this.unitOfWork = new CopyOnWriteArraySet<>();
         this.notesDirectory = Paths.get(System.getProperty("user.home"), "airpad");
+        this.otherAirpads = new SimpleIntegerProperty();
         this.charset = Charset.forName("UTF-8");
         this.added = new SimpleObjectProperty<>();
         this.removed = new SimpleObjectProperty<>();
         this.updated = new SimpleObjectProperty<>();
         this.hazelcast = Hazelcast.newHazelcastInstance();
+        this.cluster = this.hazelcast.getCluster();
+
         this.notes = this.hazelcast.getMap("notes");
-        this.notes.addEntryListener(new EntryListener<String, Note>() {
-            @Override
-            public void entryAdded(EntryEvent<String, Note> event) {
-                System.out.println("Added: " + event);
-                if (initialized) {
-                    add(event);
-                }
-            }
-
-            @Override
-            public void entryRemoved(EntryEvent<String, Note> event) {
-                System.out.println("Removed: " + event);
-                if (initialized) {
-                    remove(event);
-                }
-            }
-
-            @Override
-            public void entryUpdated(EntryEvent<String, Note> event) {
-                System.out.println("Updated: " + event);
-                if (initialized) {
-                    update(event);
-                }
-            }
-
-            @Override
-            public void entryEvicted(EntryEvent<String, Note> event) {
-            }
-        }, true);
+        installReplicationListener();
+        installSynchronizationListener();
         try {
             loadFromDisk();
         } catch (IOException ex) {
@@ -92,6 +75,20 @@ public class NotesStore {
         refill();
         launchTimer();
         this.initialized = true;
+    }
+
+    private void installSynchronizationListener() {
+        this.cluster.addMembershipListener(new MembershipListener() {
+            @Override
+            public void memberAdded(MembershipEvent membershipEvent) {
+                otherAirpads.set(getClusterSize());
+            }
+
+            @Override
+            public void memberRemoved(MembershipEvent membershipEvent) {
+                otherAirpads.set(getClusterSize());
+            }
+        });
     }
 
     public void add(EntryEvent<String, Note> event) {
@@ -103,6 +100,10 @@ public class NotesStore {
                 save(note);
             }
         });
+    }
+
+    public int getClusterSize() {
+        return cluster.getMembers().size();
     }
 
     public void update(EntryEvent<String, Note> event) {
@@ -188,6 +189,10 @@ public class NotesStore {
         }
     }
 
+    public ReadOnlyIntegerProperty otherAirpads() {
+        return this.otherAirpads;
+    }
+
     void launchTimer() {
         this.timer = new Timer("airpad-data-push");
         TimerTask task = new TimerTask() {
@@ -249,5 +254,37 @@ public class NotesStore {
     public void shutdown() {
         this.timer.cancel();
         Hazelcast.shutdownAll();
+    }
+
+    void installReplicationListener() {
+        this.notes.addEntryListener(new EntryListener<String, Note>() {
+            @Override
+            public void entryAdded(EntryEvent<String, Note> event) {
+                System.out.println("Added: " + event);
+                if (initialized) {
+                    add(event);
+                }
+            }
+
+            @Override
+            public void entryRemoved(EntryEvent<String, Note> event) {
+                System.out.println("Removed: " + event);
+                if (initialized) {
+                    remove(event);
+                }
+            }
+
+            @Override
+            public void entryUpdated(EntryEvent<String, Note> event) {
+                System.out.println("Updated: " + event);
+                if (initialized) {
+                    update(event);
+                }
+            }
+
+            @Override
+            public void entryEvicted(EntryEvent<String, Note> event) {
+            }
+        }, true);
     }
 }
