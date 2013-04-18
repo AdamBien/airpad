@@ -1,6 +1,9 @@
 .label .text{
     -fx-font-size: 0.5em;
+    -fx-effect: dropshadow(one-pass-box , white, 0, 1 , 0, 1);
 }
 .label{
     -fx-padding: 0 0 0 10;
+    -fx-background-color: linear-gradient(
+        to bottom, #dbdcdd 0%, #a9a9ab 100%);    
 }
