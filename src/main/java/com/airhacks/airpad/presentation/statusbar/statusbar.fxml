@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" minHeight="27.0" prefHeight="27.0" prefWidth="631.0" styleClass="airpad" xmlns:fx="http://javafx.com/fxml" fx:controller="com.airhacks.airpad.presentation.statusbar.StatusbarPresenter">
+  <children>
+    <Label fx:id="statusLabel" prefHeight="27.0" prefWidth="631.0" text="" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+  </children>
+</AnchorPane>

@@ -66,7 +66,7 @@ public class NotesStore {
 
         this.notes = this.hazelcast.getMap("notes");
         installReplicationListener();
-        installSynchronizationListener();
+        installMembershipsListener();
         try {
             loadFromDisk();
         } catch (IOException ex) {
@@ -75,17 +75,27 @@ public class NotesStore {
         refill();
         launchTimer();
         this.initialized = true;
+        onMembershipChange();
     }
 
-    private void installSynchronizationListener() {
+    private void installMembershipsListener() {
         this.cluster.addMembershipListener(new MembershipListener() {
             @Override
             public void memberAdded(MembershipEvent membershipEvent) {
-                otherAirpads.set(getClusterSize());
+                onMembershipChange();
             }
 
             @Override
             public void memberRemoved(MembershipEvent membershipEvent) {
+                onMembershipChange();
+            }
+        });
+    }
+
+    void onMembershipChange() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
                 otherAirpads.set(getClusterSize());
             }
         });

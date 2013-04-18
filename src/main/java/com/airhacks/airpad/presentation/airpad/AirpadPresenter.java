@@ -4,6 +4,8 @@ import com.airhacks.airpad.business.notes.boundary.NotesStore;
 import com.airhacks.airpad.business.notes.entity.Note;
 import com.airhacks.airpad.presentation.notelist.NoteListPresenter;
 import com.airhacks.airpad.presentation.notelist.NoteListView;
+import com.airhacks.airpad.presentation.statusbar.StatusbarPresenter;
+import com.airhacks.airpad.presentation.statusbar.StatusbarView;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.ResourceBundle;
@@ -38,8 +40,12 @@ public class AirpadPresenter implements Initializable {
     NotesStore store;
     @FXML
     AnchorPane noteList;
+    @FXML
+    AnchorPane statusPane;
     private NoteListView noteListView;
     private NoteListPresenter noteListPresenter;
+    private StatusbarView statusbarView;
+    private StatusbarPresenter statusbarPresenter;
     private ObjectProperty<Note> selectedNote;
     private StringProperty title;
     private ObservableList<Note> filteredNotes;
@@ -50,9 +56,14 @@ public class AirpadPresenter implements Initializable {
         this.selectedNote = new SimpleObjectProperty<>();
         this.noteListView = new NoteListView();
         this.noteListPresenter = (NoteListPresenter) this.noteListView.getPresenter();
+
+        this.statusbarView = new StatusbarView();
+        this.statusbarPresenter = (StatusbarPresenter) this.statusbarView.getPresenter();
+
         this.noteListPresenter.bind(this.filteredNotes);
         Parent view = this.noteListView.getView();
         this.noteList.getChildren().add(view);
+        this.statusPane.getChildren().add(this.statusbarView.getView());
         this.title.bind(this.noteName.textProperty());
         this.selectedNote.bind(this.noteListPresenter.selectedNote());
         installSelectedNoteListener();
