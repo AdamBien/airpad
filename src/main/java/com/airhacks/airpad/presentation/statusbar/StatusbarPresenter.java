@@ -37,6 +37,6 @@ public class StatusbarPresenter implements Initializable {
     }
 
     void clusterSizeChanged(int numberOf) {
-        statusLabel.setText("Collaborators:" + numberOf);
+        statusLabel.setText("#airhackers:" + numberOf);
     }
 }
