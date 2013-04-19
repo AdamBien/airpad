@@ -1,0 +1,6 @@
+.text-field{
+    -fx-background-color: white;
+    -fx-background-radius: 5;
+    -fx-prompt-text-fill: grey;
+    -fx-padding: 10 10 10 10;
+}
