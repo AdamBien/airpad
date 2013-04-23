@@ -149,7 +149,7 @@ public class NotesStore {
     }
 
     public void delete(Note note) {
-        this.notes.remove(note);
+        this.notes.remove(note.getIdentifier());
     }
 
     public ReadOnlyObjectProperty<Note> addedProperty() {
