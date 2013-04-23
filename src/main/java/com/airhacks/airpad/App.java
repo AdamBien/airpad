@@ -42,7 +42,7 @@ public class App extends Application {
     private void registerAccelerators(AirpadView appView, Scene scene) {
         final AirpadPresenter presenter = (AirpadPresenter) appView.getPresenter();
         scene.getAccelerators().put(
-                new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN),
+                new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY),
                 new Runnable() {
             @Override
             public void run() {
