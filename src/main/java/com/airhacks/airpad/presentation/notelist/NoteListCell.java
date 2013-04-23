@@ -15,7 +15,6 @@ public class NoteListCell extends ListCell<Note> {
 
     @Override
     protected void updateItem(Note t, boolean empty) {
-        System.out.println("NoteListCell: Item update requested: " + t);
         super.updateItem(t, empty);
         if (empty) {
             textProperty().unbind();
