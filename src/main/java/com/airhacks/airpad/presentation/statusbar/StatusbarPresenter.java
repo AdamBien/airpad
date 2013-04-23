@@ -1,6 +1,7 @@
 package com.airhacks.airpad.presentation.statusbar;
 
 import com.airhacks.airpad.business.notes.boundary.NotesStore;
+import com.airhacks.airpad.presentation.notelist.ParameterizedStringProperty;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.beans.property.SimpleStringProperty;
@@ -21,10 +22,13 @@ public class StatusbarPresenter implements Initializable {
     NotesStore store;
     @FXML
     Label statusLabel;
+    ParameterizedStringProperty status;
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         installClusterListener();
+        this.status = new ParameterizedStringProperty("#airhackers:{0}");
+        this.statusLabel.textProperty().bind(this.status);
     }
 
     void installClusterListener() {
@@ -37,6 +41,6 @@ public class StatusbarPresenter implements Initializable {
     }
 
     void clusterSizeChanged(int numberOf) {
-        statusLabel.setText("#airhackers:" + numberOf);
+        this.status.set(String.valueOf(numberOf));
     }
 }
