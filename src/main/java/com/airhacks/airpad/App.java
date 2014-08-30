@@ -1,6 +1,6 @@
 package com.airhacks.airpad;
 
-import com.airhacks.afterburner.injection.InjectionProvider;
+import com.airhacks.afterburner.injection.Injector;
 import com.airhacks.airpad.presentation.airpad.AirpadPresenter;
 import com.airhacks.airpad.presentation.airpad.AirpadView;
 import javafx.application.Application;
@@ -32,7 +32,7 @@ public class App extends Application {
 
     @Override
     public void stop() throws Exception {
-        InjectionProvider.forgetAll();
+        Injector.forgetAll();
     }
 
     public static void main(String[] args) {
@@ -44,10 +44,10 @@ public class App extends Application {
         scene.getAccelerators().put(
                 new KeyCodeCombination(KeyCode.S, KeyCombination.CONTROL_ANY),
                 new Runnable() {
-            @Override
-            public void run() {
-                presenter.save();
-            }
-        });
+                    @Override
+                    public void run() {
+                        presenter.save();
+                    }
+                });
     }
 }

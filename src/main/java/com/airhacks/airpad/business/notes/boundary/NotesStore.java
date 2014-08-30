@@ -7,6 +7,7 @@ import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import com.hazelcast.core.MemberAttributeEvent;
 import com.hazelcast.core.MembershipEvent;
 import com.hazelcast.core.MembershipListener;
 import java.io.BufferedReader;
@@ -89,26 +90,24 @@ public class NotesStore {
             public void memberRemoved(MembershipEvent membershipEvent) {
                 onMembershipChange();
             }
+
+            @Override
+            public void memberAttributeChanged(MemberAttributeEvent mae) {
+            }
         });
     }
 
     void onMembershipChange() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                otherAirpads.set(getClusterSize());
-            }
+        Platform.runLater(() -> {
+            otherAirpads.set(getClusterSize());
         });
     }
 
     public void add(EntryEvent<String, Note> event) {
         final Note note = event.getValue();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                added.set(note);
-                save(note);
-            }
+        Platform.runLater(() -> {
+            added.set(note);
+            save(note);
         });
     }
 
@@ -118,22 +117,16 @@ public class NotesStore {
 
     public void update(EntryEvent<String, Note> event) {
         final Note note = event.getValue();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                updated.set(note);
-                save(note);
-            }
+        Platform.runLater(() -> {
+            updated.set(note);
+            save(note);
         });
     }
 
     public void remove(EntryEvent<String, Note> event) {
         final Note note = event.getValue();
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                removed.set(note);
-            }
+        Platform.runLater(() -> {
+            removed.set(note);
         });
     }
 
@@ -248,7 +241,6 @@ public class NotesStore {
         this.notes.remove(note.getIdentifier());
         try {
             Files.deleteIfExists(getNotePath(note.getIdentifier()));
-
 
         } catch (IOException ex) {
             Logger.getLogger(NotesStore.class
